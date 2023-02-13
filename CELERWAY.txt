@@ -5,20 +5,19 @@ IMPORTS
     enterprises, Integer32, IpAddress,Unsigned32, Counter64, OBJECT-TYPE, MODULE-IDENTITY FROM SNMPv2-SMI
     DisplayString, RowStatus, TruthValue, MacAddress FROM SNMPv2-TC;
 
+-- The Enterprises Number
+    celerway OBJECT IDENTIFIER ::= { enterprises 55404 }
+
 -- ********************************************************************
 -- *  MODULE IDENTITY
 -- ********************************************************************
--- The Enterprises Number
-    celerway OBJECT IDENTIFIER ::= { enterprises 55404 }
     modemsMib MODULE-IDENTITY
-              LAST-UPDATED "202207131200Z"
+              LAST-UPDATED "202301261200Z"
               ORGANIZATION "CELERWAY"
               CONTACT-INFO "l.baj@celerway.com"
-              REVISION "202207141200Z"
-              DESCRIPTION
-                  "Bandwith is floating number, not integer, so it is
-                   exported as string now. Add 5G (New Radio) values.
-                   Firmware >= 2.8.1 is recommended."
+              REVISION "202301261200Z"
+                  "Added GPS info to the MIB. Firmware >= 2.9.0 is needed
+                   to export GPS data via SNMP."
         ::= { celerway 1 }
 
 -- **********************************************************************
@@ -478,7 +477,6 @@ IMPORTS
 -- ********************************************************************
 -- *  MODULE IDENTITY
 -- ********************************************************************
--- The Enterprises Number
     loadBalancerMib MODULE-IDENTITY
               LAST-UPDATED "202009031200Z"
               ORGANIZATION "CELERWAY"
@@ -582,4 +580,102 @@ IMPORTS
         DESCRIPTION
             "Device firmware version"
     ::= { deviceMib 3 }
+
+-- ********************************************************************
+-- *  MODULE IDENTITY
+-- ********************************************************************
+    gpsMib MODULE-IDENTITY
+              LAST-UPDATED "202301251200Z"
+              ORGANIZATION "CELERWAY"
+              CONTACT-INFO "l.baj@celerway.com"
+              DESCRIPTION
+                  "MIB module for GPS info"
+        ::= { celerway 4 }
+
+-- **********************************************************************
+-- *  Table
+-- **********************************************************************
+    gpsInfoTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF GpsInfoEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+            "Modems info table"
+        ::= { gpsMib 1 }
+
+    gpsInfoEntry OBJECT-TYPE
+        SYNTAX GpsInfoEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+            "An entry in the gpsInfoTable"
+        INDEX { gpsInfoId }
+        ::= { gpsInfoTable 1 }
+
+    GpsInfoEntry ::=
+    SEQUENCE {
+        gpsSignal Integer32,
+        gpsAge Integer32,
+        gpsLatitude OCTET STRING,
+        gpsLongitude OCTET STRING,
+        gpsElevation OCTET STRING,
+        gpsSpeed OCTET STRING,
+        gpsSatellites OCTET STRING
+    }
+
+    gpsSignal OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "GPS signal availability flag"
+        ::= { gpsInfoEntry 1 }
+
+    gpsAge OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Age of the GPS info in seconds"
+        ::= { gpsInfoEntry 2 }
+
+    gpsLatitude OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "GPS latitude"
+        ::= { gpsInfoEntry 3 }
+
+    gpsLongitude OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "GPS longitude"
+        ::= { gpsInfoEntry 4 }
+
+    gpsElevation OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "GPS elevation"
+        ::= { gpsInfoEntry 5 }
+
+    gpsSpeed OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "GPS Speed"
+        ::= { gpsInfoEntry 6 }
+
+    gpsSatellites OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Number of GPS sattelites"
+        ::= { gpsInfoEntry 7 }
 END
