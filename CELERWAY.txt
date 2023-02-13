@@ -1,0 +1,501 @@
+CELERWAY DEFINITIONS ::= BEGIN
+
+IMPORTS
+    OBJECT-GROUP FROM SNMPv2-CONF
+    enterprises, Integer32, IpAddress,Unsigned32, Counter64, OBJECT-TYPE, MODULE-IDENTITY FROM SNMPv2-SMI
+    DisplayString, RowStatus, TruthValue, MacAddress FROM SNMPv2-TC;
+
+-- ********************************************************************
+-- *  MODULE IDENTITY
+-- ********************************************************************
+-- The Enterprises Number
+    celerway OBJECT IDENTIFIER ::= { enterprises 55404 }
+    modemsMib MODULE-IDENTITY
+              LAST-UPDATED "202009031200Z"
+              ORGANIZATION "CELERWAY"
+              CONTACT-INFO "l.baj@celerway.com"
+              DESCRIPTION
+                  "MIB module for Celerway modems"
+        ::= { celerway 1 }
+
+-- **********************************************************************
+-- *  Modems Table
+-- **********************************************************************
+    modemsInfoTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF ModemsInfoEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+            "Modems info table"
+        ::= { modemsMib 1 }
+
+    modemsInfoEntry OBJECT-TYPE
+        SYNTAX ModemsInfoEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+            "An entry in the modemsInfoTable"
+        INDEX { modemInfoId }
+        ::= { modemsInfoTable 1 }
+
+    ModemsInfoEntry ::=
+    SEQUENCE {
+        modemInfoId Integer32,
+        imei OCTET STRING,
+        iccid OCTET STRING,
+        imsi OCTET STRING,
+        ispName OCTET STRING,
+        ispNameImsi OCTET STRING,
+        apn OCTET STRING,
+        networkMode OCTET STRING,
+        networkSubMode OCTET STRING,
+        modemState OCTET STRING,
+        modemName OCTET STRING,
+        interfaceName OCTET STRING,
+        ipAddress OCTET STRING,
+        rssi Integer32,
+        lteRsrp Integer32,
+        lteRsrq Integer32,
+        lteSnr OCTET STRING,
+        lteSinr Integer32,
+        lteBand Integer32,
+        lteFrequency Integer32,
+        ltePci Integer32,
+        cellId Integer32,
+        ecio Integer32,
+        lac Integer32,
+        bandwidth Integer32,
+        txChannel Integer32
+    }
+
+    modemInfoId OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Modem info ID"
+        ::= { modemsInfoEntry 1 }
+
+    imei OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "IMEI number"
+    ::= { modemsInfoEntry 2 }
+
+    iccid OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "ICCID (SIM card) number"
+    ::= { modemsInfoEntry 3 }
+
+    imsi OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "ICCID (SIM card) number"
+    ::= { modemsInfoEntry 4 }
+
+    ispName OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "ISP name read from network"
+    ::= { modemsInfoEntry 5 }
+
+    ispNameImsi OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "ISP name read from database based on IMSI number"
+    ::= { modemsInfoEntry 6 }
+
+    apn OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Network APN"
+    ::= { modemsInfoEntry 7 }
+
+    networkMode OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Network mode (LTE/4G/3G/UMTS etc.)"
+    ::= { modemsInfoEntry 8 }
+
+    networkSubMode OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Network submode (HSDPA, HSUPA, WCDMA, etc.)"
+    ::= { modemsInfoEntry 9 }
+
+    modemState OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Modme state (connected, disconnected, etc.)"
+    ::= { modemsInfoEntry 10 }
+
+    modemName OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Modem name"
+    ::= { modemsInfoEntry 11 }
+
+    interfaceName OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Interface name"
+    ::= { modemsInfoEntry 12 }
+
+    ipAddress OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "IP address"
+    ::= { modemsInfoEntry 13 }
+
+    rssi OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Received Signal Strength Indicator (RSSI)"
+    ::= { modemsInfoEntry 14 }
+
+    lteRsrp OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Reference Signal Receive Power (RSRP)"
+    ::= { modemsInfoEntry 15 }
+
+    lteRsrq OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Reference Signal Received Quality (RSRQ)"
+    ::= { modemsInfoEntry 16 }
+
+    lteSnr OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Signal to Noise Ratio (SNR)"
+    ::= { modemsInfoEntry 17 }
+
+    lteSinr OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Signal to Interference plus Noise Ratio (SINR)"
+    ::= { modemsInfoEntry 18 }
+
+    lteBand OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Band used by LTE"
+    ::= { modemsInfoEntry 19 }
+
+    lteFrequency OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Signal frequency used by LTE"
+    ::= { modemsInfoEntry 20 }
+
+    ltePci OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "LTE Physical Cell ID"
+    ::= { modemsInfoEntry 21 }
+
+    cellId OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Cell ID (CID)"
+    ::= { modemsInfoEntry 22 }
+
+    ecio OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Quality of the signal EC/IO"
+    ::= { modemsInfoEntry 23 }
+
+    lac OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Location Area Code (LAC)"
+    ::= { modemsInfoEntry 24 }
+
+    bandwith OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Carrier bandwidth in MHz"
+    ::= { modemsInfoEntry 25 }
+
+    txChannel OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "TX channel"
+    ::= { modemsInfoEntry 26 }
+
+-- **********************************************************************
+-- *  Modems Secondary Cells Table
+-- **********************************************************************
+    secondaryCellsInfoTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF SecondaryCellsInfoEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+            "Secondary cells info table"
+        ::= { modemsInfoEntry 27 }
+
+    secondaryCellsInfoEntry OBJECT-TYPE
+        SYNTAX ModemsInfoEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+            "An entry in the modemsInfoTable"
+        INDEX { modemInfoId, secondaryCellInfoId }
+        ::= { secondaryCellsInfoTable 1 }
+
+    SecondaryCellsInfoEntry ::=
+    SEQUENCE {
+        secondaryCellInfoId Integer32,
+        scellRssi Integer32,
+        scellLteRsrp Integer32,
+        scellLteRsrq Integer32,
+        scellLteBand Integer32,
+        scellLteFrequency Integer32,
+        scellLtePci Integer32,
+        scellTxChannel Integer32,
+        scellState OCTET STRING,
+        scellBandwidth Integer32
+    }
+
+    secondaryCellInfoId OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Secondary cell info ID"
+        ::= { secondaryCellsInfoEntry 1 }
+
+    scellRssi OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Received Signal Strength Indicator (RSSI)"
+    ::= { secondaryCellsInfoEntry 2 }
+
+    scellLteRsrp OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Reference Signal Receive Power (RSRP)"
+    ::= { secondaryCellsInfoEntry 3 }
+
+    scellLteRsrq OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Reference Signal Received Quality (RSRQ)"
+    ::= { secondaryCellsInfoEntry 4 }
+
+    scellLteBand OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Band used by LTE"
+    ::= { secondaryCellsInfoEntry 5 }
+
+    scellLteFrequency OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Signal frequency used by LTE"
+    ::= { secondaryCellsInfoEntry 6 }
+
+    scellLtePci OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "LTE Physical Cell ID"
+    ::= { secondaryCellsInfoEntry 7 }
+
+    scellTxChannel OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "TX channel"
+    ::= { secondaryCellsInfoEntry 8 }
+
+    scellState OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Cell state"
+    ::= { secondaryCellsInfoEntry 9 }
+
+    scellBandwith OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Carrier bandwidth in MHz"
+    ::= { secondaryCellsInfoEntry 10 }
+
+
+-- ********************************************************************
+-- *  MODULE IDENTITY
+-- ********************************************************************
+-- The Enterprises Number
+    loadBalancerMib MODULE-IDENTITY
+              LAST-UPDATED "202009031200Z"
+              ORGANIZATION "CELERWAY"
+              CONTACT-INFO "l.baj@celerway.com"
+              DESCRIPTION
+                  "MIB module for Celerway load balancer subsystem"
+        ::= { celerway 2 }
+
+-- **********************************************************************
+-- *  Table
+-- **********************************************************************
+    loadBalancerInfoTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF LoadBalancerInfoEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+            "Modems info table"
+        ::= { loadBalancerMib 1 }
+
+    loadBalancerInfoEntry OBJECT-TYPE
+        SYNTAX LoadBalancerInfoEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+            "An entry in the loadBalancerInfoTable"
+        INDEX { loadBalancerInfoId }
+        ::= { loadBalancerInfoTable 1 }
+
+    LoadBalancerInfoEntry ::=
+    SEQUENCE {
+        interfaceInfoId Integer32,
+        interfaceName OCTET STRING,
+        connectivityPassed OCTET STRING,
+        linkQuality OCTET STRING
+    }
+
+    loadBalancerInfoId OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Load balancer info ID"
+        ::= { loadBalancerInfoEntry 1 }
+
+    interfaceName OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Name of the interface of the load balancer link"
+    ::= { loadBalancerInfoEntry 2 }
+
+    connectivityPassed OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Status of the connectivity check for the load balancer link"
+    ::= { loadBalancerInfoEntry 3 }
+
+    linkQuality OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Estimated link quality"
+    ::= { loadBalancerInfoEntry 4 }
+
+
+-- ********************************************************************
+-- *  MODULE IDENTITY
+-- ********************************************************************
+    deviceMib MODULE-IDENTITY
+              LAST-UPDATED "202009031200Z"
+              ORGANIZATION "CELERWAY"
+              CONTACT-INFO "l.baj@celerway.com"
+              DESCRIPTION
+                  "MIB module for Celerway device"
+    ::= { celerway 3 }
+
+    boardName OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Device board name"
+    ::= { deviceMib 1 }
+
+    modelName OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Device model name"
+    ::= { deviceMib 2 }
+
+    firmwareVersion OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Device firmware version"
+    ::= { deviceMib 3 }
+END
