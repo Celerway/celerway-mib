@@ -11,11 +11,14 @@ IMPORTS
 -- The Enterprises Number
     celerway OBJECT IDENTIFIER ::= { enterprises 55404 }
     modemsMib MODULE-IDENTITY
-              LAST-UPDATED "202009031200Z"
+              LAST-UPDATED "202207131200Z"
               ORGANIZATION "CELERWAY"
               CONTACT-INFO "l.baj@celerway.com"
+              REVISION "202207141200Z"
               DESCRIPTION
-                  "MIB module for Celerway modems"
+                  "Bandwith is floating number, not integer, so it is
+                   exported as string now. Add 5G (New Radio) values.
+                   Firmware >= 2.8.1 is recommended."
         ::= { celerway 1 }
 
 -- **********************************************************************
@@ -65,7 +68,14 @@ IMPORTS
         ecio Integer32,
         lac Integer32,
         bandwidth Integer32,
-        txChannel Integer32
+        txChannel Integer32,
+        earfcn Integer32,
+        nrRsrp Integer32,
+        nrRsrq Integer32,
+        nrSinr Integer32,
+        nrArfcn Integer32,
+        nrBand Integer32,
+        nrPcid Integer32
     }
 
     modemInfoId OBJECT-TYPE
@@ -185,7 +195,7 @@ IMPORTS
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
-            "Reference Signal Receive Power (RSRP)"
+            "Reference Signal Received Power (RSRP)"
     ::= { modemsInfoEntry 15 }
 
     lteRsrq OBJECT-TYPE
@@ -260,8 +270,8 @@ IMPORTS
             "Location Area Code (LAC)"
     ::= { modemsInfoEntry 24 }
 
-    bandwith OBJECT-TYPE
-        SYNTAX Integer32
+    bandwidth OBJECT-TYPE
+        SYNTAX OCTET STRING
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
@@ -275,6 +285,62 @@ IMPORTS
         DESCRIPTION
             "TX channel"
     ::= { modemsInfoEntry 26 }
+
+    earfcn OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "E-UTRA Absolute Radio Frequency Channel Number"
+    ::= { modemsInfoEntry 27 }
+
+    nrRsrp OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "New Radio (5G) Reference Signal Received Power (RSRP)"
+    ::= { modemsInfoEntry 28 }
+
+    nrRsrq OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "New Radio (5G) Reference Signal Received Quality (RSRQ)"
+    ::= { secondaryCellsInfoEntry 29 }
+
+    nrSinr OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "New Radio (5G) Signal to Interference plus Noise Ratio (SINR)"
+    ::= { modemsInfoEntry 30 }
+
+    nrArfcn OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "New Radio (5G) Absolute radio-frequency channel number (ARFCN)"
+    ::= { modemsInfoEntry 31 }
+
+    nrBand OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "New Radio (5G) Band"
+    ::= { modemsInfoEntry 32 }
+
+    nrPcid OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "New Radio (5G) Physical Cell ID"
+    ::= { modemsInfoEntry 33 }
 
 -- **********************************************************************
 -- *  Modems Secondary Cells Table
@@ -307,7 +373,9 @@ IMPORTS
         scellLtePci Integer32,
         scellTxChannel Integer32,
         scellState OCTET STRING,
-        scellBandwidth Integer32
+        scellBandwidth Integer32,
+        scellSinr Integer32,
+        scellEarfcn Integer32
     }
 
     secondaryCellInfoId OBJECT-TYPE
@@ -323,7 +391,7 @@ IMPORTS
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
-            "Received Signal Strength Indicator (RSSI)"
+            "Secondary Cell Received Signal Strength Indicator (RSSI)"
     ::= { secondaryCellsInfoEntry 2 }
 
     scellLteRsrp OBJECT-TYPE
@@ -331,7 +399,7 @@ IMPORTS
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
-            "Reference Signal Receive Power (RSRP)"
+            "Secondary Cell Reference Signal Receive Power (RSRP)"
     ::= { secondaryCellsInfoEntry 3 }
 
     scellLteRsrq OBJECT-TYPE
@@ -339,7 +407,7 @@ IMPORTS
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
-            "Reference Signal Received Quality (RSRQ)"
+            "Secondary Cell Reference Signal Received Quality (RSRQ)"
     ::= { secondaryCellsInfoEntry 4 }
 
     scellLteBand OBJECT-TYPE
@@ -347,7 +415,7 @@ IMPORTS
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
-            "Band used by LTE"
+            "Secondary Cell Band used by LTE"
     ::= { secondaryCellsInfoEntry 5 }
 
     scellLteFrequency OBJECT-TYPE
@@ -355,7 +423,7 @@ IMPORTS
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
-            "Signal frequency used by LTE"
+            "Secondary Cell Signal frequency used by LTE"
     ::= { secondaryCellsInfoEntry 6 }
 
     scellLtePci OBJECT-TYPE
@@ -363,7 +431,7 @@ IMPORTS
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
-            "LTE Physical Cell ID"
+            "Secondary Cell LTE Physical Cell ID"
     ::= { secondaryCellsInfoEntry 7 }
 
     scellTxChannel OBJECT-TYPE
@@ -371,7 +439,7 @@ IMPORTS
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
-            "TX channel"
+            "Secondary Cell TX channel"
     ::= { secondaryCellsInfoEntry 8 }
 
     scellState OBJECT-TYPE
@@ -379,7 +447,7 @@ IMPORTS
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
-            "Cell state"
+            "Secondary Cell state"
     ::= { secondaryCellsInfoEntry 9 }
 
     scellBandwith OBJECT-TYPE
@@ -389,6 +457,22 @@ IMPORTS
         DESCRIPTION
             "Carrier bandwidth in MHz"
     ::= { secondaryCellsInfoEntry 10 }
+
+    scellSinr OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Secondary Cell Signal to Interference plus Noise Ratio (SINR)"
+    ::= { secondaryCellsInfoEntry 11 }
+
+    scellEarfcn OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Secondary Cell E-UTRA Absolute Radio Frequency Channel Number"
+    ::= { modemsInfoEntry 12 }
 
 
 -- ********************************************************************
