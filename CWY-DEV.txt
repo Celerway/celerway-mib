@@ -1,0 +1,48 @@
+CELERWAY DEFINITIONS ::= BEGIN
+
+IMPORTS
+    OBJECT-GROUP FROM SNMPv2-CONF
+    enterprises, Integer32, IpAddress,Unsigned32, Counter64, OBJECT-TYPE, MODULE-IDENTITY FROM SNMPv2-SMI
+    DisplayString, RowStatus, TruthValue, MacAddress FROM SNMPv2-TC;
+
+-- ********************************************************************
+-- *  MODULE IDENTITY
+-- ********************************************************************
+    deviceMib MODULE-IDENTITY
+              LAST-UPDATED "202009031200Z"
+              ORGANIZATION "CELERWAY"
+              CONTACT-INFO "l.baj@celerway.com"
+              DESCRIPTION
+                  "MIB module for Celerway device"
+              REVISION "202009031200Z"
+              DESCRIPTION
+                  "Initial version to get board name, model and firmware version"
+    ::= { celerway 3 }
+
+-- The Enterprises Number
+    celerway OBJECT IDENTIFIER ::= { enterprises 55404 }
+
+    boardName OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Device board name"
+    ::= { deviceMib 1 }
+
+    modelName OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Device model name"
+    ::= { deviceMib 2 }
+
+    firmwareVersion OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Device firmware version"
+    ::= { deviceMib 3 }
+END
