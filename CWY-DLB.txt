@@ -1,0 +1,84 @@
+CWY-DLB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    OBJECT-GROUP FROM SNMPv2-CONF
+    enterprises, Integer32, IpAddress,Unsigned32, Counter64, OBJECT-TYPE, MODULE-IDENTITY FROM SNMPv2-SMI
+    DisplayString, RowStatus, TruthValue, MacAddress FROM SNMPv2-TC;
+
+-- ********************************************************************
+-- *  MODULE IDENTITY
+-- ********************************************************************
+    loadBalancerMib MODULE-IDENTITY
+              LAST-UPDATED "202009031200Z"
+              ORGANIZATION "CELERWAY"
+              CONTACT-INFO "l.baj@celerway.com"
+              DESCRIPTION
+                  "Add load balancer values"
+              REVISION "202009031200Z"
+              DESCRIPTION
+                  "MIB module for Celerway load balancer subsystem"
+        ::= { celerway 2 }
+
+-- The Enterprises Number
+    celerway OBJECT IDENTIFIER ::= { enterprises 55404 }
+
+-- **********************************************************************
+-- *  Table
+-- **********************************************************************
+    loadBalancerInfoTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF LoadBalancerInfoEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+            "Modems info table"
+        ::= { loadBalancerMib 1 }
+
+    loadBalancerInfoEntry OBJECT-TYPE
+        SYNTAX LoadBalancerInfoEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+            "An entry in the loadBalancerInfoTable"
+        INDEX { loadBalancerInfoId }
+        ::= { loadBalancerInfoTable 1 }
+
+    LoadBalancerInfoEntry ::=
+    SEQUENCE {
+        loadBalancerInfoId Integer32,
+        interfaceName OCTET STRING,
+        connectivityPassed OCTET STRING,
+        linkQuality OCTET STRING
+    }
+
+    loadBalancerInfoId OBJECT-TYPE
+        SYNTAX Integer32 (1..65535)
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Load balancer info ID"
+        ::= { loadBalancerInfoEntry 1 }
+
+    interfaceName OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Name of the interface of the load balancer link"
+    ::= { loadBalancerInfoEntry 2 }
+
+    connectivityPassed OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Status of the connectivity check for the load balancer link"
+    ::= { loadBalancerInfoEntry 3 }
+
+    linkQuality OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Estimated link quality"
+    ::= { loadBalancerInfoEntry 4 }
+END
