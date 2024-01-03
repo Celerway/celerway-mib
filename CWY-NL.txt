@@ -1,4 +1,4 @@
-CELERWAY DEFINITIONS ::= BEGIN
+CWY-NL DEFINITIONS ::= BEGIN
 
 IMPORTS
     OBJECT-GROUP FROM SNMPv2-CONF
@@ -345,8 +345,16 @@ IMPORTS
             "New Radio (5G) Physical Cell ID"
     ::= { modemsInfoEntry 33 }
 
-    secondaryCellsInfo OBJECT IDENTIFIER
+    nrSnr OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "New Radio (5G) Signal To Noise Ratio"
     ::= { modemsInfoEntry 34 }
+
+    secondaryCellsInfo OBJECT IDENTIFIER
+    ::= { modemsInfoEntry 35 }
 
 -- **********************************************************************
 -- *  Modems Secondary Cells Table
@@ -366,7 +374,7 @@ IMPORTS
         DESCRIPTION
             "An entry in the modemsInfoTable"
         INDEX { modemInfoId, secondaryCellInfoId }
-        ::= { secondaryCellsInfoTable 1 }
+        ::= { secondaryCellsInfo 1 }
 
     SecondaryCellsInfoEntry ::=
     SEQUENCE {
