@@ -1,9 +1,8 @@
-CWY-DEV DEFINITIONS ::= BEGIN
+CWY-DEV-MIB DEFINITIONS ::= BEGIN
 
 IMPORTS
-    OBJECT-GROUP FROM SNMPv2-CONF
-    enterprises, Integer32, IpAddress,Unsigned32, Counter64, OBJECT-TYPE, MODULE-IDENTITY FROM SNMPv2-SMI
-    DisplayString, RowStatus, TruthValue, MacAddress FROM SNMPv2-TC;
+    OBJECT-GROUP, MODULE-COMPLIANCE FROM SNMPv2-CONF
+    enterprises, OBJECT-TYPE, MODULE-IDENTITY FROM SNMPv2-SMI;
 
 -- ********************************************************************
 -- *  MODULE IDENTITY
@@ -45,4 +44,25 @@ IMPORTS
         DESCRIPTION
             "Device firmware version"
     ::= { deviceMib 3 }
+
+-- **********************************************************************
+-- *  Object Group
+-- **********************************************************************
+    deviceMibGroup OBJECT-GROUP
+        OBJECTS { boardName, modelName, firmwareVersion }
+        STATUS current
+        DESCRIPTION
+            "A collection of objects for device information."
+    ::= { deviceMib 4 }
+
+-- **********************************************************************
+-- *  Module Compliance
+-- **********************************************************************
+    deviceMibCompliance MODULE-COMPLIANCE
+        STATUS current
+        DESCRIPTION
+            "The compliance statement for the device MIB."
+        MODULE
+            MANDATORY-GROUPS { deviceMibGroup }
+    ::= { deviceMib 5 }
 END

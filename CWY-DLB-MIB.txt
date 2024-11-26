@@ -1,9 +1,8 @@
-CWY-DLB DEFINITIONS ::= BEGIN
+CWY-DLB-MIB DEFINITIONS ::= BEGIN
 
 IMPORTS
-    OBJECT-GROUP FROM SNMPv2-CONF
-    enterprises, Integer32, IpAddress,Unsigned32, Counter64, OBJECT-TYPE, MODULE-IDENTITY FROM SNMPv2-SMI
-    DisplayString, RowStatus, TruthValue, MacAddress FROM SNMPv2-TC;
+    OBJECT-GROUP, MODULE-COMPLIANCE FROM SNMPv2-CONF
+    enterprises, Integer32, OBJECT-TYPE, MODULE-IDENTITY FROM SNMPv2-SMI;
 
 -- ********************************************************************
 -- *  MODULE IDENTITY
@@ -52,7 +51,7 @@ IMPORTS
 
     loadBalancerInfoId OBJECT-TYPE
         SYNTAX Integer32 (1..65535)
-        MAX-ACCESS read-only
+        MAX-ACCESS not-accessible
         STATUS current
         DESCRIPTION
             "Load balancer info ID"
@@ -81,4 +80,25 @@ IMPORTS
         DESCRIPTION
             "Estimated link quality"
     ::= { loadBalancerInfoEntry 4 }
+
+-- **********************************************************************
+-- *  Object Group
+-- **********************************************************************
+    loadBalancerGroup OBJECT-GROUP
+        OBJECTS { interfaceName, connectivityPassed, linkQuality }
+        STATUS  current
+        DESCRIPTION
+            "A collection of objects for load balancer"
+        ::= { loadBalancerMib 2 }
+
+-- **********************************************************************
+-- *  Module Compliance
+-- **********************************************************************
+    loadBalancerCompliance MODULE-COMPLIANCE
+        STATUS  current
+        DESCRIPTION
+            "Compliance statement for load balancer MIB"
+        MODULE
+            MANDATORY-GROUPS { loadBalancerGroup }
+        ::= { loadBalancerMib 3 }
 END

@@ -1,9 +1,8 @@
-CWY-GPS DEFINITIONS ::= BEGIN
+CWY-GPS-MIB DEFINITIONS ::= BEGIN
 
 IMPORTS
     OBJECT-GROUP FROM SNMPv2-CONF
-    enterprises, Integer32, IpAddress,Unsigned32, Counter64, OBJECT-TYPE, MODULE-IDENTITY FROM SNMPv2-SMI
-    DisplayString, RowStatus, TruthValue, MacAddress FROM SNMPv2-TC;
+    enterprises, Integer32, OBJECT-TYPE, MODULE-IDENTITY FROM SNMPv2-SMI;
 
 -- ********************************************************************
 -- *  MODULE IDENTITY
@@ -56,7 +55,7 @@ IMPORTS
 
     gpsInfoId OBJECT-TYPE
         SYNTAX Integer32 (1..512)
-        MAX-ACCESS read-only
+        MAX-ACCESS not-accessible
         STATUS current
         DESCRIPTION
             "GPS info ID"
@@ -118,4 +117,31 @@ IMPORTS
         DESCRIPTION
             "Number of GPS sattelites"
         ::= { gpsInfoEntry 8 }
+
+-- **********************************************************************
+-- *  Object Group
+-- **********************************************************************
+    gpsInfoGroup OBJECT-GROUP
+        OBJECTS {
+            gpsSignal,
+            gpsAge,
+            gpsLatitude,
+            gpsLongitude,
+            gpsElevation,
+            gpsSpeed,
+            gpsSatellites
+        }
+        STATUS current
+        DESCRIPTION
+            "A collection of objects for GPS information."
+        ::= { gpsMib 2 }
+
+
+    gpsMibCompliance MODULE-COMPLIANCE
+        STATUS current
+        DESCRIPTION
+            "Compliance statement for GPS MIB."
+        MODULE
+            MANDATORY-GROUPS { gpsInfoGroup }
+        ::= { gpsMib 3 }
 END
