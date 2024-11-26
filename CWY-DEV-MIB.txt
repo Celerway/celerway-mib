@@ -1,0 +1,68 @@
+CWY-DEV-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    OBJECT-GROUP, MODULE-COMPLIANCE FROM SNMPv2-CONF
+    enterprises, OBJECT-TYPE, MODULE-IDENTITY FROM SNMPv2-SMI;
+
+-- ********************************************************************
+-- *  MODULE IDENTITY
+-- ********************************************************************
+    deviceMib MODULE-IDENTITY
+              LAST-UPDATED "202009031200Z"
+              ORGANIZATION "CELERWAY"
+              CONTACT-INFO "l.baj@celerway.com"
+              DESCRIPTION
+                  "MIB module for Celerway device"
+              REVISION "202009031200Z"
+              DESCRIPTION
+                  "Initial version to get board name, model and firmware version"
+    ::= { celerway 3 }
+
+-- The Enterprises Number
+    celerway OBJECT IDENTIFIER ::= { enterprises 55404 }
+
+    boardName OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Device board name"
+    ::= { deviceMib 1 }
+
+    modelName OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Device model name"
+    ::= { deviceMib 2 }
+
+    firmwareVersion OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Device firmware version"
+    ::= { deviceMib 3 }
+
+-- **********************************************************************
+-- *  Object Group
+-- **********************************************************************
+    deviceMibGroup OBJECT-GROUP
+        OBJECTS { boardName, modelName, firmwareVersion }
+        STATUS current
+        DESCRIPTION
+            "A collection of objects for device information."
+    ::= { deviceMib 4 }
+
+-- **********************************************************************
+-- *  Module Compliance
+-- **********************************************************************
+    deviceMibCompliance MODULE-COMPLIANCE
+        STATUS current
+        DESCRIPTION
+            "The compliance statement for the device MIB."
+        MODULE
+            MANDATORY-GROUPS { deviceMibGroup }
+    ::= { deviceMib 5 }
+END

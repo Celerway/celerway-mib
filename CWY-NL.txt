@@ -1,12 +1,9 @@
-CELERWAY DEFINITIONS ::= BEGIN
+CWY-NL DEFINITIONS ::= BEGIN
 
 IMPORTS
     OBJECT-GROUP FROM SNMPv2-CONF
     enterprises, Integer32, IpAddress,Unsigned32, Counter64, OBJECT-TYPE, MODULE-IDENTITY FROM SNMPv2-SMI
     DisplayString, RowStatus, TruthValue, MacAddress FROM SNMPv2-TC;
-
--- The Enterprises Number
-    celerway OBJECT IDENTIFIER ::= { enterprises 55404 }
 
 -- ********************************************************************
 -- *  MODULE IDENTITY
@@ -15,10 +12,16 @@ IMPORTS
               LAST-UPDATED "202301261200Z"
               ORGANIZATION "CELERWAY"
               CONTACT-INFO "l.baj@celerway.com"
+              DESCRIPTION
+                  "Add network listener values"
               REVISION "202301261200Z"
-                  "Added GPS info to the MIB. Firmware >= 2.9.0 is needed
-                   to export GPS data via SNMP."
+              DESCRIPTION
+                  "MIB module for Celerway network listener subsystem"
+
         ::= { celerway 1 }
+
+-- The Enterprises Number
+    celerway OBJECT IDENTIFIER ::= { enterprises 55404 }
 
 -- **********************************************************************
 -- *  Modems Table
@@ -66,7 +69,7 @@ IMPORTS
         cellId Integer32,
         ecio Integer32,
         lac Integer32,
-        bandwidth Integer32,
+        bandwidth OCTET STRING,
         txChannel Integer32,
         earfcn Integer32,
         nrRsrp Integer32,
@@ -74,11 +77,12 @@ IMPORTS
         nrSinr Integer32,
         nrArfcn Integer32,
         nrBand Integer32,
-        nrPcid Integer32
+        nrPcid Integer32,
+        secondaryCellsInfo OBJECT IDENTIFIER
     }
 
     modemInfoId OBJECT-TYPE
-        SYNTAX Integer32
+        SYNTAX Integer32 (1..65535)
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
@@ -307,7 +311,7 @@ IMPORTS
         STATUS current
         DESCRIPTION
             "New Radio (5G) Reference Signal Received Quality (RSRQ)"
-    ::= { secondaryCellsInfoEntry 29 }
+    ::= { modemsInfoEntry 29 }
 
     nrSinr OBJECT-TYPE
         SYNTAX Integer32
@@ -341,6 +345,17 @@ IMPORTS
             "New Radio (5G) Physical Cell ID"
     ::= { modemsInfoEntry 33 }
 
+    nrSnr OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "New Radio (5G) Signal To Noise Ratio"
+    ::= { modemsInfoEntry 34 }
+
+    secondaryCellsInfo OBJECT IDENTIFIER
+    ::= { modemsInfoEntry 35 }
+
 -- **********************************************************************
 -- *  Modems Secondary Cells Table
 -- **********************************************************************
@@ -350,16 +365,16 @@ IMPORTS
         STATUS current
         DESCRIPTION
             "Secondary cells info table"
-        ::= { modemsInfoEntry 27 }
+        ::= { secondaryCellsInfo 1 }
 
     secondaryCellsInfoEntry OBJECT-TYPE
-        SYNTAX ModemsInfoEntry
+        SYNTAX SecondaryCellsInfoEntry
         MAX-ACCESS not-accessible
         STATUS current
         DESCRIPTION
             "An entry in the modemsInfoTable"
         INDEX { modemInfoId, secondaryCellInfoId }
-        ::= { secondaryCellsInfoTable 1 }
+        ::= { secondaryCellsInfo 1 }
 
     SecondaryCellsInfoEntry ::=
     SEQUENCE {
@@ -372,13 +387,13 @@ IMPORTS
         scellLtePci Integer32,
         scellTxChannel Integer32,
         scellState OCTET STRING,
-        scellBandwidth Integer32,
+        scellBandwidth OCTET STRING,
         scellSinr Integer32,
         scellEarfcn Integer32
     }
 
     secondaryCellInfoId OBJECT-TYPE
-        SYNTAX Integer32
+        SYNTAX Integer32 (1..65535)
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
@@ -449,8 +464,8 @@ IMPORTS
             "Secondary Cell state"
     ::= { secondaryCellsInfoEntry 9 }
 
-    scellBandwith OBJECT-TYPE
-        SYNTAX Integer32
+    scellBandwidth OBJECT-TYPE
+        SYNTAX OCTET STRING
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
@@ -471,211 +486,5 @@ IMPORTS
         STATUS current
         DESCRIPTION
             "Secondary Cell E-UTRA Absolute Radio Frequency Channel Number"
-    ::= { modemsInfoEntry 12 }
-
-
--- ********************************************************************
--- *  MODULE IDENTITY
--- ********************************************************************
-    loadBalancerMib MODULE-IDENTITY
-              LAST-UPDATED "202009031200Z"
-              ORGANIZATION "CELERWAY"
-              CONTACT-INFO "l.baj@celerway.com"
-              DESCRIPTION
-                  "MIB module for Celerway load balancer subsystem"
-        ::= { celerway 2 }
-
--- **********************************************************************
--- *  Table
--- **********************************************************************
-    loadBalancerInfoTable OBJECT-TYPE
-        SYNTAX SEQUENCE OF LoadBalancerInfoEntry
-        MAX-ACCESS not-accessible
-        STATUS current
-        DESCRIPTION
-            "Modems info table"
-        ::= { loadBalancerMib 1 }
-
-    loadBalancerInfoEntry OBJECT-TYPE
-        SYNTAX LoadBalancerInfoEntry
-        MAX-ACCESS not-accessible
-        STATUS current
-        DESCRIPTION
-            "An entry in the loadBalancerInfoTable"
-        INDEX { loadBalancerInfoId }
-        ::= { loadBalancerInfoTable 1 }
-
-    LoadBalancerInfoEntry ::=
-    SEQUENCE {
-        interfaceInfoId Integer32,
-        interfaceName OCTET STRING,
-        connectivityPassed OCTET STRING,
-        linkQuality OCTET STRING
-    }
-
-    loadBalancerInfoId OBJECT-TYPE
-        SYNTAX Integer32
-        MAX-ACCESS read-only
-        STATUS current
-        DESCRIPTION
-            "Load balancer info ID"
-        ::= { loadBalancerInfoEntry 1 }
-
-    interfaceName OBJECT-TYPE
-        SYNTAX OCTET STRING
-        MAX-ACCESS read-only
-        STATUS current
-        DESCRIPTION
-            "Name of the interface of the load balancer link"
-    ::= { loadBalancerInfoEntry 2 }
-
-    connectivityPassed OBJECT-TYPE
-        SYNTAX OCTET STRING
-        MAX-ACCESS read-only
-        STATUS current
-        DESCRIPTION
-            "Status of the connectivity check for the load balancer link"
-    ::= { loadBalancerInfoEntry 3 }
-
-    linkQuality OBJECT-TYPE
-        SYNTAX OCTET STRING
-        MAX-ACCESS read-only
-        STATUS current
-        DESCRIPTION
-            "Estimated link quality"
-    ::= { loadBalancerInfoEntry 4 }
-
-
--- ********************************************************************
--- *  MODULE IDENTITY
--- ********************************************************************
-    deviceMib MODULE-IDENTITY
-              LAST-UPDATED "202009031200Z"
-              ORGANIZATION "CELERWAY"
-              CONTACT-INFO "l.baj@celerway.com"
-              DESCRIPTION
-                  "MIB module for Celerway device"
-    ::= { celerway 3 }
-
-    boardName OBJECT-TYPE
-        SYNTAX OCTET STRING
-        MAX-ACCESS read-only
-        STATUS current
-        DESCRIPTION
-            "Device board name"
-    ::= { deviceMib 1 }
-
-    modelName OBJECT-TYPE
-        SYNTAX OCTET STRING
-        MAX-ACCESS read-only
-        STATUS current
-        DESCRIPTION
-            "Device model name"
-    ::= { deviceMib 2 }
-
-    firmwareVersion OBJECT-TYPE
-        SYNTAX OCTET STRING
-        MAX-ACCESS read-only
-        STATUS current
-        DESCRIPTION
-            "Device firmware version"
-    ::= { deviceMib 3 }
-
--- ********************************************************************
--- *  MODULE IDENTITY
--- ********************************************************************
-    gpsMib MODULE-IDENTITY
-              LAST-UPDATED "202301251200Z"
-              ORGANIZATION "CELERWAY"
-              CONTACT-INFO "l.baj@celerway.com"
-              DESCRIPTION
-                  "MIB module for GPS info"
-        ::= { celerway 4 }
-
--- **********************************************************************
--- *  Table
--- **********************************************************************
-    gpsInfoTable OBJECT-TYPE
-        SYNTAX SEQUENCE OF GpsInfoEntry
-        MAX-ACCESS not-accessible
-        STATUS current
-        DESCRIPTION
-            "Modems info table"
-        ::= { gpsMib 1 }
-
-    gpsInfoEntry OBJECT-TYPE
-        SYNTAX GpsInfoEntry
-        MAX-ACCESS not-accessible
-        STATUS current
-        DESCRIPTION
-            "An entry in the gpsInfoTable"
-        INDEX { gpsInfoId }
-        ::= { gpsInfoTable 1 }
-
-    GpsInfoEntry ::=
-    SEQUENCE {
-        gpsSignal Integer32,
-        gpsAge Integer32,
-        gpsLatitude OCTET STRING,
-        gpsLongitude OCTET STRING,
-        gpsElevation OCTET STRING,
-        gpsSpeed OCTET STRING,
-        gpsSatellites OCTET STRING
-    }
-
-    gpsSignal OBJECT-TYPE
-        SYNTAX Integer32
-        MAX-ACCESS read-only
-        STATUS current
-        DESCRIPTION
-            "GPS signal availability flag"
-        ::= { gpsInfoEntry 1 }
-
-    gpsAge OBJECT-TYPE
-        SYNTAX Integer32
-        MAX-ACCESS read-only
-        STATUS current
-        DESCRIPTION
-            "Age of the GPS info in seconds"
-        ::= { gpsInfoEntry 2 }
-
-    gpsLatitude OBJECT-TYPE
-        SYNTAX OCTET STRING
-        MAX-ACCESS read-only
-        STATUS current
-        DESCRIPTION
-            "GPS latitude"
-        ::= { gpsInfoEntry 3 }
-
-    gpsLongitude OBJECT-TYPE
-        SYNTAX OCTET STRING
-        MAX-ACCESS read-only
-        STATUS current
-        DESCRIPTION
-            "GPS longitude"
-        ::= { gpsInfoEntry 4 }
-
-    gpsElevation OBJECT-TYPE
-        SYNTAX OCTET STRING
-        MAX-ACCESS read-only
-        STATUS current
-        DESCRIPTION
-            "GPS elevation"
-        ::= { gpsInfoEntry 5 }
-
-    gpsSpeed OBJECT-TYPE
-        SYNTAX OCTET STRING
-        MAX-ACCESS read-only
-        STATUS current
-        DESCRIPTION
-            "GPS Speed"
-        ::= { gpsInfoEntry 6 }
-
-    gpsSatellites OBJECT-TYPE
-        SYNTAX Integer32
-        MAX-ACCESS read-only
-        STATUS current
-        DESCRIPTION
-            "Number of GPS sattelites"
-        ::= { gpsInfoEntry 7 }
+    ::= { secondaryCellsInfoEntry 12 }
 END
